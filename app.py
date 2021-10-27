@@ -5,28 +5,30 @@ import signal
 import websockets
 import json
 from datetime import datetime
+import pytz
 
 async def echo(websocket, path): # обработка входящего сообщения
     data_set = {}
     async for message in websocket:
         print("Inbound message:\t", message)
-        data_set["time"] = datetime.now().strftime("%H:%M")
+        converted = pytz.timezone('Europe/Moscow')
+        data_set["time"] = datetime.now(converted).strftime("%H:%M")
         if (message=="Текст"):
             data_set["content"] = "Пример текстового сообщения"
             json_data = json.dumps(data_set)
             await websocket.send(json_data)
         elif (message=="Бот"):
-          data_set["content"] = "Бот поддерживает команды \"Текст\" и еще некоторые другие, с которыми я баловалась"
+          data_set["content"] = "Бот поддерживает команды \"Текст\", \"Привет\" и \"Погода\""
           json_data = json.dumps(data_set)
           await websocket.send(json_data)
-        elif (message == "e"):
-            data_set["content"] = "Shrek is love, shrek is life"
-            json_data = json.dumps(data_set)
-            await websocket.send(json_data)
-        elif (message == "f"):
-            data_set["content"] = "pay respect"
-            json_data = json.dumps(data_set)
-            await websocket.send(json_data)
+        elif (message=="Привет"):
+          data_set["content"] = "Как дела?"
+          json_data = json.dumps(data_set)
+          await websocket.send(json_data)
+        elif (message=="Погода"):
+          data_set["content"] = "Мороз и солнце, день чудесный!"
+          json_data = json.dumps(data_set)
+          await websocket.send(json_data)
         else:
             data_set["content"] = "Сообщение не распознано."
             json_data = json.dumps(data_set)
@@ -44,6 +46,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-# start_server = websockets.serve(echo, "0.0.0.0", 80)
-# asyncio.get_event_loop().run_until_complete(start_server)
-# asyncio.get_event_loop().run_forever()
