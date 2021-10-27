@@ -1,7 +1,2 @@
 websockets
-asyncio
-os
-signal
-json
-datetime
 pytz
